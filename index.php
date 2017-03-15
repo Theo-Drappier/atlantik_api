@@ -1,21 +1,33 @@
 <?php
+require 'rb.php';
 
-use RedBeanPHP\R;
 
-require_once 'vendor/autoload.php';
+require '/home/u990570955/public_html/Slim-2.x/Slim/Slim.php';
+\Slim\Slim::registerAutoloader();
 
-R::setup('mysql:host=localhost; dbname=atlantik_v0', 'root', 'pwsio');
+R::setup('mysql:host=mysql.hostinger.fr; dbname=u990570955_ppe', 'u990570955_ppe', 'pwsio2012');
 
 $app = new \Slim\Slim();
 
+function encode($arrayObject){
+	//$compteur = 0;
+	$values= array();
+	foreach($arrayObject as $row){
+		$values[/*$compteur*/] = $row;
+		//$compteur ++;
+	}
+	
+	return $values;
+}
+
 //Liste de toutes les données d'une table
 $app->get('/find/:table', function ($table) {
-    echo json_encode(R::findAll($table), JSON_UNESCAPED_UNICODE);
+    echo json_encode(encode(R::findAll($table)), JSON_UNESCAPED_UNICODE);
 });
 
 //un enregistrement d'une table (récupération par son id)
 $app->get('/find/:table/:id', function ($table, $id) {
-    echo json_encode(R::find($table, 'id=' . $id), JSON_UNESCAPED_UNICODE);
+    echo json_encode(encode(R::find($table, 'id=' . $id)), JSON_UNESCAPED_UNICODE);
 });
 
 
@@ -27,7 +39,7 @@ $app->group('/boat', function() use ($app) {
     //affiche un bateau selon son nom
     $app->get('/byName/:name', function($name) {
         $boat = R::find('boat', ' name = ?', array($name));
-        echo json_encode($boat, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($boat), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'un bateau
@@ -51,7 +63,7 @@ $app->group('/boat', function() use ($app) {
         $boat = R::load('boat', $id);
         $boat->name = $name;
         R::store($boat);
-        echo json_encode($boat, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($boat), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'un bateau
@@ -75,13 +87,13 @@ $app->group('/booking', function() use ($app) {
     //affiche une réservation selon son nom
     $app->get('/byName/:name', function($name) {
         $booking = R::find('booking', ' name = ?', array($name));
-        echo json_encode($booking, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($booking), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche une réservation selon la traversée
     $app->get('/byCrossing/:crossing_id', function($crossing_id) {
         $booking = R::find('booking', ' crossing_id = ?', array($crossing_id));
-        echo json_encode($booking, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($booking), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'une réservation
@@ -121,7 +133,7 @@ $app->group('/booking', function() use ($app) {
         $booking->city = $city;
         $booking->crossing_id = $crossing_id;
         R::store($booking);
-        echo json_encode($booking, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($booking), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'une réservation
@@ -145,13 +157,13 @@ $app->group('/bookingtype', function() use ($app) {
     //affiche un type de réservation selon la réservation
     $app->get('/byBooking/:booking_id', function($booking_id) {
         $booking = R::find('bookingtype', ' booking_id = ?', array($booking_id));
-        echo json_encode($booking, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($booking), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche un type de réservation selon le type
     $app->get('/byType/:type_id', function($type_id) {
         $booking = R::find('bookingtype', ' type_id = ?', array($type_id));
-        echo json_encode($booking, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($booking), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'une réservation
@@ -183,7 +195,7 @@ $app->group('/bookingtype', function() use ($app) {
         $booking->booking_id = $booking_id;
         $booking->type_id = $type_id;
         R::store($booking);
-        echo json_encode($booking, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($booking), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'une réservation
@@ -207,13 +219,13 @@ $app->group('/capacity', function() use ($app) {
     //affiche une capacité selon sa catégorie
     $app->get('/byCategory/:category_id', function($category_id) {
         $capacity = R::find('capacity', ' category_id = ?', array($category_id));
-        echo json_encode($capacity, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($capacity), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche une capacité selon le bateau
     $app->get('/byBoat/:type_id', function($boat_id) {
         $capacity = R::find('capacity', ' boat_id = ?', array($boat_id));
-        echo json_encode($capacity, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($capacity), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'une capacité
@@ -245,7 +257,7 @@ $app->group('/capacity', function() use ($app) {
         $capacity->category_id = $category_id;
         $capacity->boat_id = $boat_id;
         R::store($capacity);
-        echo json_encode($capacity, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($capacity), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'une capacité
@@ -269,7 +281,7 @@ $app->group('/category', function() use ($app) {
     //affiche une catégorie selon son label
     $app->get('/byLabel/:label', function($label) {
         $category = R::find('category', ' label = ?', array($label));
-        echo json_encode($category, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($category), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'une catégorie
@@ -297,7 +309,7 @@ $app->group('/category', function() use ($app) {
         $category->code = $code;
         $category->label = $label;
         R::store($category);
-        echo json_encode($category, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($category), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'une catégorie
@@ -322,25 +334,25 @@ $app->group('/crossing', function() use ($app) {
     //affiche une traversée selon sa date
     $app->get('/byDate/:date', function($date) {
         $crossing = R::find('crossing', ' date = ?', array($date));
-        echo json_encode($crossing, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($crossing), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche une traversée selon sa date et son heure
     $app->get('/byDateTime/:date/:time', function($date,$time) {
         $crossing = R::find('crossing', ' date = ? AND time_start = ?', array($date,$time));
-        echo json_encode($crossing, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($crossing), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche une traversée selon son lien
     $app->get('/byLink/:link_id', function($link_id) {
         $crossing = R::find('crossing', ' link_id = ?', array($link_id));
-        echo json_encode($crossing, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($crossing), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche une traversée selon son bateau
     $app->get('/byBoat/:boat_id', function($boat_id) {
         $crossing = R::find('crossing', ' boat_id = ?', array($boat_id));
-        echo json_encode($crossing, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($crossing), JSON_UNESCAPED_UNICODE);
     });
 
 
@@ -377,7 +389,7 @@ $app->group('/crossing', function() use ($app) {
         $crossing->link_id = $link;
         $crossing->boat_id = $boat;
         R::store($crossing);
-        echo json_encode($crossing, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($crossing), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'une traversée
@@ -401,7 +413,7 @@ $app->group('/harbor', function() use ($app) {
     //affiche un port selon son nom
     $app->get('/byName/:name', function($name) {
         $harbor = R::find('harbor', ' name = ?', array($name));
-        echo json_encode($harbor, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($harbor), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'un port
@@ -425,7 +437,7 @@ $app->group('/harbor', function() use ($app) {
         $harbor = R::load('harbor', $id);
         $harbor->name = $name;
         R::store($harbor);
-        echo json_encode($harbor, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($harbor), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'un port
@@ -449,19 +461,19 @@ $app->group('/link', function() use ($app) {
     //affiche un lien selon son port de départ
     $app->get('/byStartingHarbor/:harbor_id', function($harbor_id) {
         $link = R::find('link', ' starting_harbor_id = ?', array($harbor_id));
-        echo json_encode($link, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($link), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche un lien selon le port d'arrivé
     $app->get('/byArrivalHarbor/:harbor_id', function($harbor_id) {
         $link = R::find('link', ' arrival_harbor_id = ?', array($harbor_id));
-        echo json_encode($link, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($link), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche lien(s) selon le secteur
     $app->get('/bySector/:sector_id', function($sector_id) {
         $link = R::find('link', ' sector_id = ?', array($sector_id));
-        echo json_encode($link, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($link), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'un lien
@@ -493,7 +505,7 @@ $app->group('/link', function() use ($app) {
         $link->arrival_harbor_id = $arrival_harbor;
         $link->sector_id = $sector;
         R::store($link);
-        echo json_encode($link, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($link), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'un lien
@@ -517,19 +529,19 @@ $app->group('/period', function() use ($app) {
     //affiche une période selon la date de début
     $app->get('/byStartDate/:start_date', function($start_date) {
         $period = R::find('period', ' start_date = ?', array($start_date));
-        echo json_encode($period, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($period), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche une période selon la date de fin
     $app->get('/byEndDate/:end_date', function($end_date) {
         $period = R::find('period', ' end_date = ?', array($end_date));
-        echo json_encode($period, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($period), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche une période selon la date de début et de fin
     $app->get('/byStartDate/byEndDate/:start_date/:end_date', function($start_date,$end_date) {
         $period = R::find('period', ' start_date = ? AND end_date = ?', array($start_date,$end_date));
-        echo json_encode($period, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($period), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'une période
@@ -557,7 +569,7 @@ $app->group('/period', function() use ($app) {
         $period->start_date = $start_date;
         $period->end_date = $end_date;
         R::store($period);
-        echo json_encode($period, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($period), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'une période
@@ -581,19 +593,19 @@ $app->group('/price', function() use ($app) {
     //affiche prix selon un lien
     $app->get('/byLink/:link_id', function($link_id) {
         $price = R::find('price', ' link_id = ?', array($link_id));
-        echo json_encode($price, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($price), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche prix selon le type
     $app->get('/byType/:type_id', function($type_id) {
         $price = R::find('price', ' type_id = ?', array($type_id));
-        echo json_encode($price, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($price), JSON_UNESCAPED_UNICODE);
     });
     
     //affiche prix selon la période
     $app->get('/byPeriod/:period_id', function($period_id) {
         $price = R::find('price', ' period_id = ?', array($period_id));
-        echo json_encode($price, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($price), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'un prix
@@ -629,7 +641,7 @@ $app->group('/price', function() use ($app) {
         $price->period_id = $period_id;
         $price->price = $price_value;
         R::store($price);
-        echo json_encode($price, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($price), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'un prix
@@ -653,7 +665,7 @@ $app->group('/sector', function() use ($app) {
     //affiche un secteur selon son nom
     $app->get('/byName/:name', function($name) {
         $sector = R::find('sector', ' name = ?', array($name));
-        echo json_encode($sector, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($sector), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'un secteur
@@ -677,7 +689,7 @@ $app->group('/sector', function() use ($app) {
         $sector = R::load('sector', $id);
         $sector->name = $name;
         R::store($sector);
-        echo json_encode($sector, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($sector), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'un secteur
@@ -701,7 +713,7 @@ $app->group('/type', function() use ($app) {
     //affiche un type selon son label
     $app->get('/byLabel/:label', function($label) {
         $type = R::find('type', ' label = ?', array($label));
-        echo json_encode($type, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($type), JSON_UNESCAPED_UNICODE);
     });
 
     //ajout d'un type
@@ -733,7 +745,7 @@ $app->group('/type', function() use ($app) {
         $type->label = $label;
         $type->category_id = $category_id;
         R::store($type);
-        echo json_encode($type, JSON_UNESCAPED_UNICODE);
+        echo json_encode(encode($type), JSON_UNESCAPED_UNICODE);
     });
     
     //suppression d'un type
