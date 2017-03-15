@@ -2,10 +2,10 @@
 require 'rb.php';
 
 
-require '/home/u990570955/public_html/Slim-2.x/Slim/Slim.php';
+require '/Slim-2.x/Slim/Slim.php';
 \Slim\Slim::registerAutoloader();
 
-R::setup('mysql:host=mysql.hostinger.fr; dbname=u990570955_ppe', 'u990570955_ppe', 'pwsio2012');
+R::setup('mysql:host=localhost; dbname=atlantik_v0', 'root', '');
 
 $app = new \Slim\Slim();
 
